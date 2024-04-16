@@ -1,3 +1,4 @@
+package player;
 
 public class Player {
 	//order와 balls는 건드리면 됩니다.
