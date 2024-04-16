@@ -1,22 +1,24 @@
+package model;
+
 import java.awt.*;
 
 public class Ball {
-	static final double ELASTIC_MODULUS = 1f;
-	static final double MASS = 1;
-	static final double DIAMETER = 5.73f;
+	public static final double ELASTIC_MODULUS = 1f;
+	public static final double MASS = 1;
+	public static final double DIAMETER = 5.73f;
 
-	int idx;
+	public int idx;
+	public double x;
+	public double y;
+	public double nx;
+	public double ny;
+	public double xVeloc;
+	public double yVeloc;
+	public double xa;
+	public double ya;
+	public boolean isValid = false;
+	public Color color;
 
-	double x;
-	double y;
-	double nx;
-	double ny;
-	double xVeloc;
-	double yVeloc;
-	double xa;
-	double ya;
-	boolean isValid = false;
-	Color color;
 	public Ball(int idx, double x, double y)  {
 		this.idx = idx;
 		this.x = x;
@@ -87,6 +89,7 @@ public class Ball {
 		}
 		return true;
 	}
+
 	Vector bounce(Vector tmp1, Vector tmp2, Vector v){
 		Vector v1a = tmp1.getProjVector(v.dx, v.dy);
 		Vector v1b = tmp1.getProjVector(v.dy, -v.dx);
@@ -125,7 +128,4 @@ public class Ball {
             xVeloc *= -Constant.TABLE_COR;
 		}
 	}
-
-
-
 }

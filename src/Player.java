@@ -1,23 +1,29 @@
-import java.util.Arrays;
 
 public class Player {
-	int order = 0;
-	double balls[][];
+	//order와 balls는 건드리면 됩니다.
+	private int order = 0;
+	private double[][] balls;
 
-	double power = 100f;
-	double angle = 0f;
+	private double power = 100f;
+	private double angle = 0f;
 
-	public Player(int order, double balls[][]){
+	public Player(int order, double[][] balls){
 		this.order = order;
 		this.balls = balls;
 	}
 
+	/**
+	 * 적절히 공을 넣을 수 있도록 getAngle()과 getPower() 메서드를 변경해야 합니다.
+	 * 스스로 로직을 짜봅시다.
+	*/
 	public double getAngle() {
+		//TODO
 		for (int i = 1; i < balls.length - 1; i++) if (isObjectBall(i)) angle = getAngle(0, i);
 		return angle;
 	}
 	
 	public double getPower() {
+		//TODO
 		return power;
 	}
 
@@ -39,6 +45,4 @@ public class Player {
 
 		return true;
 	}
-
-
 }

@@ -1,35 +1,42 @@
+package model;
+
+import view.Display;
+
+
 import java.awt.*;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
+
 public class Game {
-	static boolean isMoving = false;
-	static Ball Balls[];
-		
-	int playerCount;
-	int ballCount; //각 플레이어가 넣어야 할 공의 수(마지막 공 제외)
-	static double balls[][]; //0번째는 큐 볼. balls[][0]은 x좌표, [1]은 y좌표, 마지막 번호의 공이 검은 공
-	int order = 0;
-	int turnCount = 0;
-	boolean isPlaying;
-	boolean pocketNotObject = false;
+	public static Ball[] Balls;
+	public static double[][] balls; //0번째는 큐 볼. balls[][0]은 x좌표, [1]은 y좌표, 마지막 번호의 공이 검은 공
+	public Toolkit toolkit = Toolkit.getDefaultToolkit();
+	public static final int[][] HOLES = { { 0, 0 }, { 127, 0 }, { 254, 0 }, { 0, 127 }, { 127, 127 }, { 254, 127 } };
 
-	int fouls[];
-	int playerBallCount[];
-	Set<Integer> []objectBalls;
+	private boolean isMoving = false;
+	private final int playerCount;
 
-	LocalTime time;
-	Toolkit toolkit = Toolkit.getDefaultToolkit();
-	static final int[][] HOLES = { { 0, 0 }, { 127, 0 }, { 254, 0 }, { 0, 127 }, { 127, 127 }, { 254, 127 } };
-	Player[] players;
-	Display display;
+	private int order = 0;
+	private int turnCount = 0;
+	private boolean isPlaying;
+	private boolean pocketNotObject = false;
 
-	Game(int playerCount, int ballCountForEachPlayer){
+	private int[] fouls;
+	private int[] playerBallCount;
+	private Set<Integer> []objectBalls;
+
+	private LocalTime time;
+
+	private Player[] players;
+	private Display display;
+
+	public Game(int playerCount, int ballCountForEachPlayer){
 		this.playerCount = playerCount;
-		this.ballCount = ballCountForEachPlayer;
-		
-		balls = new double[ballCountForEachPlayer * playerCount + 2][2];
+        //각 플레이어가 넣어야 할 공의 수(마지막 공 제외)
+
+        balls = new double[ballCountForEachPlayer * playerCount + 2][2];
 		Balls = new Ball[balls.length];
 		setBalls();
 
@@ -39,14 +46,14 @@ public class Game {
 
 		for (int i = 0; i < playerCount; i++) players[i] = new Player(i, balls);
 
-		this.display = new Display("Pocket Ball", Constant.TABLE_WIDTH, Constant.TABLE_HEIGHT, Constant.SIZE_UNIT);
+		this.display = new Display("Pocket model.Ball", Constant.TABLE_WIDTH, Constant.TABLE_HEIGHT, Constant.SIZE_UNIT);
 		this.display.setBalls(Balls);
 
 		order = 0;
 		isPlaying = true;
 		turnCount = 2;
 		playerBallCount = new int[playerCount];
-		for (int i = 0; i < playerCount; i++) playerBallCount[i] = ballCount + 1;
+		for (int i = 0; i < playerCount; i++) playerBallCount[i] = ballCountForEachPlayer + 1;
 		System.out.println("----------------  게  임  시  작  -----------------");
 		for (int i = 0; i < Balls.length; i++){
 			if (i == Balls.length - 1) {
@@ -67,7 +74,7 @@ public class Game {
 		play();
 	}
 	
-	void setBalls() {
+	private void setBalls() {
 		time = LocalTime.now();
 		//흰 공 설정
 		balls[0][0] = 254f/4;
@@ -89,7 +96,7 @@ public class Game {
 		}
 	}
 
-	boolean prevBallCollision(int cnt) {
+	private boolean prevBallCollision(int cnt) {
 		for (int i = 0; i < cnt; i++) {
 			if (getDist(balls[i], balls[cnt]) < Ball.DIAMETER) return true;
 		}
@@ -97,19 +104,18 @@ public class Game {
 		return false;
 	}
 	
-	boolean tableCollision(int i) {
+	private boolean tableCollision(int i) {
 		if (balls[i][0] > Constant.TABLE_WIDTH - Ball.DIAMETER/2) return true;
 		if (balls[i][0] < Ball.DIAMETER/2) return true;
 		if (balls[i][1] < Ball.DIAMETER/2) return true;
-		if (balls[i][1] > Constant.TABLE_HEIGHT - Ball.DIAMETER/2) return true;
-		return false;
+		return balls[i][1] > Constant.TABLE_HEIGHT - Ball.DIAMETER/2;
 	}
 	
-	double getDist(double []a, double[]b) {
+	private double getDist(double []a, double[]b) {
 		return (a[0] - b[0])*(a[0] - b[0]) + (a[1] - b[1])*(a[1] - b[1]);
 	}
 
-	void play() {
+	private void play() {
 		while (isPlaying) {
 			System.out.println("[" + (order + 1) +"번 플레이어의 " + (turnCount/2) +"번 째 차례]");
 			//플레이어로부터 힘과 각도를 받아서
@@ -204,12 +210,12 @@ public class Game {
 		System.out.println("게임 종료.");
 	}
 
-	void setNextOrder(){
+	private void setNextOrder(){
 		order = (order + 1) % playerCount;
 		turnCount += 1;
 	}
 	
-	int tryMove() {
+	private int tryMove() {
 		int firstHit = 0;
 		for (int i = 0; i < balls.length; i++) 	if (Balls[i].isValid) Balls[i].calcNext();
 
@@ -229,7 +235,7 @@ public class Game {
 		return firstHit;
 	}
 
-	int update() {
+	private int update() {
 		int pocket = 0;
 		for (int i = 0; i < Balls.length; i++) {
 			Balls[i].x = Balls[i].nx;
@@ -243,42 +249,40 @@ public class Game {
 		return pocket;
 	}
 
-	boolean isObjectBall(int ballNum){
+	private boolean isObjectBall(int ballNum){
 		if (ballNum == 0) return false;
 		if (playerCount == 2) {
 			if (ballNum % 2 != order && ballNum != Balls.length - 1) return true;
 			if (playerBallCount[order] == 1 && ballNum == Balls.length - 1) return true;
 		}
 		if (ballNum != Balls.length - 1) return true;
-		else if (playerBallCount[order] == 1 && ballNum == Balls.length-1) return true;
-
-		return false;
+		return playerBallCount[order] == 1 && ballNum == Balls.length-1;
 	}
 
-	int checkHoles(int idx){
+	private int checkHoles(int idx){
 		if (!Balls[idx].isValid) return 0;
 		double x = Balls[idx].x;
 		double y = Balls[idx].y;
-		for (int j = 0; j < HOLES.length; j++){
-			if (getDist(new double[]{x, y}, new double[]{(double)HOLES[j][0], (double)HOLES[j][1]}) < Constant.HOLE_SIZE * Constant.HOLE_SIZE){
-				if (Balls[idx].isValid) System.out.printf("%d번 공 포켓!!\n", idx);
-				Balls[idx].isValid = false;
-				Balls[idx].yVeloc = Balls[idx].xVeloc = 0;
-				if (!isObjectBall(idx)) {
-					if (idx == Balls.length - 1 && playerBallCount[order] != 1) {
-						System.out.printf("공이 남아있는데 마지막 공을 넣었으므로 %d번 플레이어의 패배입니다.\n", order);
-						isPlaying = false;
-					}
-					else if (idx != 0){
-						playerBallCount[playerCount - order - 1]--;
-					}
-					return -1;
-				}
-				System.out.println("목적구를 넣는 데 성공했습니다.");
-				playerBallCount[order]--;
-				return 1;
-			}
-		}
+
+        for (int[] hole : HOLES) {
+            if (getDist(new double[]{x, y}, new double[]{(double) hole[0], (double) hole[1]}) < Constant.HOLE_SIZE * Constant.HOLE_SIZE) {
+                if (Balls[idx].isValid) System.out.printf("%d번 공 포켓!!\n", idx);
+                Balls[idx].isValid = false;
+                Balls[idx].yVeloc = Balls[idx].xVeloc = 0;
+                if (!isObjectBall(idx)) {
+                    if (idx == Balls.length - 1 && playerBallCount[order] != 1) {
+                        System.out.printf("공이 남아있는데 마지막 공을 넣었으므로 %d번 플레이어의 패배입니다.\n", order);
+                        isPlaying = false;
+                    } else if (idx != 0) {
+                        playerBallCount[playerCount - order - 1]--;
+                    }
+                    return -1;
+                }
+                System.out.println("목적구를 넣는 데 성공했습니다.");
+                playerBallCount[order]--;
+                return 1;
+            }
+        }
 		return 0;
 	}
 }

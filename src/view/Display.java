@@ -1,10 +1,17 @@
+package view;
+
+import model.Ball;
+import model.Constant;
+import model.Game;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 class DrawPanel extends JPanel {
-    Ball[] Balls;
-    int SIZE_UNIT;
+    private Ball[] Balls;
+    private final int SIZE_UNIT;
+
     public DrawPanel (int SIZE_UNIT) {
         super();
         this.SIZE_UNIT = SIZE_UNIT;
@@ -18,6 +25,7 @@ class DrawPanel extends JPanel {
     void setBalls(Ball[] Balls){
         this.Balls = Balls;
     }
+
     public void draw(Graphics g){
         Graphics2D g2 = (Graphics2D)g;
         for (int i = 0; i < Game.HOLES.length; i++){
@@ -28,24 +36,25 @@ class DrawPanel extends JPanel {
                     Constant.HOLE_SIZE * SIZE_UNIT * 2);
             g2.fill(shape);
         }
-        for (int i = 0; i < Balls.length; i++){
-            if (Balls[i].isValid == false) continue;
-            g2.setColor(Balls[i].color);
-            Ellipse2D.Double shape = new Ellipse2D.Double((Balls[i].x - Ball.DIAMETER/2) * SIZE_UNIT ,
-                    (Balls[i].y - Ball.DIAMETER/2) * SIZE_UNIT,
+
+        for (Ball ball : Balls) {
+            if (!ball.isValid) continue;
+            g2.setColor(ball.color);
+            Ellipse2D.Double shape = new Ellipse2D.Double((ball.x - Ball.DIAMETER / 2) * SIZE_UNIT,
+                    (ball.y - Ball.DIAMETER / 2) * SIZE_UNIT,
                     Ball.DIAMETER * SIZE_UNIT,
                     Ball.DIAMETER * SIZE_UNIT);
             g2.fill(shape);
         }
     }
 }
-public class Display {
-    private JFrame frame;
 
+public class Display {
     private DrawPanel panel;
-    private JPanel tableFrame;
-    private String title;
-    private int width, height, SIZE_UNIT;
+    private final String title;
+    private final int width;
+    private final int height;
+    private final int SIZE_UNIT;
 
     public Display(String title, int width, int height, int SIZE_UNIT) {
         this.title = title;
@@ -59,7 +68,7 @@ public class Display {
         panel.setBalls(Balls);
     }
     private void createDisplay(){
-        frame = new JFrame(title);
+        JFrame frame = new JFrame(title);
         frame.setSize(width + 100, height + 150);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -69,7 +78,7 @@ public class Display {
         //panel.setSize(new Dimension(width, height));
         panel.setBackground(new Color(0x1D6132));
         panel.setBounds(50,50, width, height);
-        tableFrame = new JPanel();
+        JPanel tableFrame = new JPanel();
         tableFrame.setBackground(new Color(0x654321));
 
         frame.add(panel);
