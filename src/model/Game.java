@@ -1,12 +1,11 @@
 package model;
 
+import player.Player;
 import view.Display;
-
 
 import java.awt.*;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-
 
 public class Game {
 	public static Ball[] Balls;
@@ -15,8 +14,7 @@ public class Game {
 	public Toolkit toolkit = Toolkit.getDefaultToolkit();
 	public static final int[][] HOLES = { { 0, 0 }, { 127, 0 }, { 254, 0 }, { 0, 127 }, { 127, 127 }, { 254, 127 } };
 
-	private boolean isMoving = false;
-	private final int playerCount;
+    private final int playerCount;
 
 	private int order = 0;
 	private int turnCount = 0;
@@ -123,8 +121,7 @@ public class Game {
 		for (int i = 0; i < cnt; i++) {
 			if (getDist(balls[i], balls[cnt]) < Ball.DIAMETER) return true;
 		}
-		if (getDist(balls[cnt], balls[balls.length-1]) < Ball.DIAMETER) return true;
-		return false;
+		return getDist(balls[cnt], balls[balls.length-1]) < Ball.DIAMETER;
 	}
 
 	private boolean tableCollision(int i) {
@@ -144,36 +141,46 @@ public class Game {
 			//플레이어로부터 힘과 각도를 받아서
 			double angle = players[order].getAngle();
 			double power = players[order].getPower();
-			if (power > 100f) power = 100f;
-			if (power < 0f) power = 0f;
 
+			if (power > Constant.MAX_POWER) power = Constant.MAX_POWER;
+			if (power < Constant.MIN_POWER) power = Constant.MIN_POWER;
 			power *= Constant.POWER_UNIT;
+
 			//수구에 힘과 각도를 넣기
 			Balls[0].addPower(power, angle);
-
 			time = LocalTime.now();
-			isMoving = true;
 
-			int whiteFirstHit = 0;
+            boolean isMoving = true;
+			int whiteFirstHitIdx = 0; //수구가 가장 먼저 친 공의 번호
 			int pocket = 0;
-			boolean continueOrder = false;
+			boolean continueOrder = false;//순서가 안 바뀌고 그대로 진행할지 여부
+
 			pocketNotObject = false;
 
+			//움직이는 공이 있는 경우
 			while (isMoving) {
 				isMoving = false;
+
+				//FPS
 				if (time.until(LocalTime.now(), ChronoUnit.MILLIS) < Constant.SKIP_TICKS) {
 					isMoving = true;
 					continue;
 				}
-				for (int i = 0; i < balls.length; i++) {
-					if (Math.abs(Balls[i].xVeloc) > Constant.VELOC_BOUND || Math.abs(Balls[i].yVeloc) > Constant.VELOC_BOUND) {
-						isMoving = true;
-					}
-				}
-				int hit = tryMove();
-				if (whiteFirstHit == 0) whiteFirstHit = hit;
 
+				for (int i = 0; i < balls.length; i++) {
+                    if (Balls[i].isMoving()){
+                        isMoving = true;
+                        break;
+                    }
+				}
+
+				//수구가 가장 먼저 친 공을 확인
+				int hit = tryMove();
+				if (whiteFirstHitIdx == 0) whiteFirstHitIdx = hit;
+
+				//게임 상태 업데이트
 				int u = update();
+
 				if (pocket == 0) pocket = u;
 				else if (u < 0 && pocket >= 0) pocket = u;
 
@@ -182,28 +189,32 @@ public class Game {
 				toolkit.sync();
 			}
 
+			//흰 공을 넣어버린 경우
 			if (!Balls[0].isValid) {
 				System.out.println("흰 공을 넣었으므로 흰 공의 위치를 재설정하고 게임을 재진행합니다.");
 				Balls[0].isValid = true;
-				Balls[0].x = Constant.TABLE_WIDTH / 2;
-				Balls[0].y = Constant.TABLE_HEIGHT / 2;
+				Balls[0].x = (double) Constant.TABLE_WIDTH / 2;
+				Balls[0].y = (double) Constant.TABLE_HEIGHT / 2;
 				balls[0] = new double[]{Balls[0].x, Balls[0].y};
+
+				//1초후 게임 재개
 				try {
 					Thread.sleep(1000);
-				}
-				catch (Exception e) {
+				} catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
-				}
-				continueOrder = false;
+                continueOrder = false;
 			}
+
 			if (isPlaying) {
-				if (whiteFirstHit == 0) {
+				if (whiteFirstHitIdx == 0) {
 					fouls[order]++;
 					System.out.println("아무 공도 맞히지 못했습니다. 파울(" + fouls[order] + ")");
 					continueOrder = false;
-				} else if (!isObjectBall(whiteFirstHit)) {
+				} else if (!isObjectBall(whiteFirstHitIdx)) {
 					fouls[order]++;
-					System.out.println("목적구가 아닌 공(" + whiteFirstHit + "번)을 먼저 맞혔습니다. 파울(" + fouls[order] + ")");
+					System.out.println("목적구가 아닌 공(" + whiteFirstHitIdx + "번)을 먼저 맞혔습니다. 파울(" + fouls[order] + ")");
 					continueOrder = false;
 				} else if (pocketNotObject) {
 					fouls[order]++;

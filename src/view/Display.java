@@ -89,5 +89,6 @@ public class Display {
     public void draw(){
         panel.repaint();
     }
+
 }
 

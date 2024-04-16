@@ -25,9 +25,11 @@ public class Constant {
     /**
      * Don't Touch Below!!!
      */
-    static final int SIZE_UNIT = 5;
-    static final int TABLE_WIDTH = 254;
-    static final int TABLE_HEIGHT = 127;
-    static final double VELOC_BOUND = 0.003f;
-    static final int SKIP_TICKS = 1000/FPS;
+    public static final int SIZE_UNIT = 5;
+    public static final int TABLE_WIDTH = 254;
+    public static final int TABLE_HEIGHT = 127;
+    public static final double VELOC_BOUND = 0.003f;
+    public static final int SKIP_TICKS = 1000/FPS;
+    public static final double MAX_POWER = 100f;
+    public static final double MIN_POWER = 0f;
 }

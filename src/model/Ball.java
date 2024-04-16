@@ -127,4 +127,9 @@ public class Ball {
             xVeloc *= -Constant.TABLE_COR;
 		}
 	}
+
+	//각 공들의 이동 속도가 최저 기준을 넘은 경우, 움직이고 있는 상태라 판단한다.
+	public boolean isMoving(){
+		return Math.abs(this.xVeloc) > Constant.VELOC_BOUND || Math.abs(this.yVeloc) > Constant.VELOC_BOUND;
+	}
 }
