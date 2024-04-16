@@ -7,17 +7,17 @@ public class Ball {
 	public static final double MASS = 1;
 	public static final double DIAMETER = 5.73f;
 
-	public int idx;
-	public double x;
-	public double y;
-	public double nx;
-	public double ny;
-	public double xVeloc;
-	public double yVeloc;
-	public double xa;
-	public double ya;
-	public boolean isValid = false;
-	public Color color;
+	private int idx;
+	private double x;
+	private double y;
+	private double nx;
+	private double ny;
+	private double xVeloc;
+	private double yVeloc;
+	private double xa;
+	private double ya;
+	private boolean isValid = false;
+	private Color color;
 
 	public Ball(int idx, double x, double y)  {
 		this.idx = idx;
@@ -29,7 +29,7 @@ public class Ball {
 		this.color = (this.idx == Game.Balls.length -1 ? Color.BLACK : Constant.BALL_COLOR[idx % 6]);
 	}
 
-	void addPower(double power, double angle) {
+	public void addPower(double power, double angle) {
 		double acc = power / MASS;
 		angle = Math.toRadians(angle);
 		xa = Math.cos(angle) * acc;
@@ -38,7 +38,7 @@ public class Ball {
 		yVeloc = ya;
 	}
 
-	void calcNext() {
+	public void calcNext() {
 		if (Math.abs(xVeloc) < Constant.VELOC_BOUND) xVeloc = 0;
 		if (Math.abs(yVeloc) < Constant.VELOC_BOUND) yVeloc = 0;
 
@@ -48,7 +48,7 @@ public class Ball {
 		nx = x + xVeloc;
 	}
 
-	boolean collides(Ball j) {
+	public boolean collides(Ball j) {
 		if (!((j.nx - nx) * (j.nx - nx) + (j.ny - ny) * (j.ny - ny) < DIAMETER * DIAMETER)) return false;
 
 		Vector ball1 = new Vector(new Point(x, y), new Point(nx, ny));
@@ -90,7 +90,7 @@ public class Ball {
 		return true;
 	}
 
-	Vector bounce(Vector tmp1, Vector tmp2, Vector v){
+	public Vector bounce(Vector tmp1, Vector tmp2, Vector v){
 		Vector v1a = tmp1.getProjVector(v.dx, v.dy);
 		Vector v1b = tmp1.getProjVector(v.dy, -v.dx);
 		Vector v2a = tmp2.getProjVector(v.dx, v.dy);
@@ -108,8 +108,7 @@ public class Ball {
 		return exchanged2;
 	}
 
-
-	void collidesTable() {
+	public void collidesTable() {
 		if (ny > Constant.TABLE_HEIGHT - DIAMETER/2){
             ny = Constant.TABLE_HEIGHT - DIAMETER/2;
             yVeloc *= -Constant.TABLE_COR;

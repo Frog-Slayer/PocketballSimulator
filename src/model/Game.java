@@ -12,6 +12,7 @@ import java.util.Set;
 public class Game {
 	public static Ball[] Balls;
 	public static double[][] balls; //0번째는 큐 볼. balls[][0]은 x좌표, [1]은 y좌표, 마지막 번호의 공이 검은 공
+
 	public Toolkit toolkit = Toolkit.getDefaultToolkit();
 	public static final int[][] HOLES = { { 0, 0 }, { 127, 0 }, { 254, 0 }, { 0, 127 }, { 127, 127 }, { 254, 127 } };
 
@@ -36,9 +37,8 @@ public class Game {
 		this.playerCount = playerCount;
         //각 플레이어가 넣어야 할 공의 수(마지막 공 제외)
 
-        balls = new double[ballCountForEachPlayer * playerCount + 2][2];
-		Balls = new Ball[balls.length];
-		setBalls();
+
+		setBalls(ballCountForEachPlayer);
 
 		players = new Player[playerCount];
 		fouls = new int[playerCount];
@@ -73,13 +73,18 @@ public class Game {
 		System.out.println("-------------------------------------------------");
 		play();
 	}
-	
-	private void setBalls() {
+
+	/**
+	 * 임의의 위치에 공을 생성합니다.
+	 */
+	private void setBalls(int ballCountForEachPlayer) {
+		balls = new double[ballCountForEachPlayer * playerCount + 2][2];
 		time = LocalTime.now();
-		//흰 공 설정
+
+		//흰 공의 위치 설정
 		balls[0][0] = 254f/4;
 		balls[0][1] = 127f/2;
-		//검은 공 설정
+		//검은 공의 위치 설정
 		balls[balls.length-1][0] = 254f/4*3;
 		balls[balls.length-1][1] = 127f/2;
 		
@@ -90,7 +95,8 @@ public class Game {
 			balls[i][1] = rand * (Constant.TABLE_HEIGHT - 15) + 6;
 			if (prevBallCollision(i) || tableCollision(i)) i--; 
 		}
-	
+
+		Balls = new Ball[balls.length];
 		for (int i = 0; i < balls.length; i++) {
 			Balls[i] = new Ball(i, balls[i][0], balls[i][1]);
 		}
