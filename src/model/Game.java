@@ -51,24 +51,10 @@ public class Game {
 		playerBallCount = new int[playerCount];
 		for (int i = 0; i < playerCount; i++) playerBallCount[i] = ballCountForEachPlayer + 1;
 
+		//시작 메시지 출력
+		printStartMessage();
 
-		System.out.println("----------------  게  임  시  작  -----------------");
-		for (int i = 0; i < Balls.length; i++){
-			if (i == Balls.length - 1) {
-				System.out.println("    " + i + "번 공의 색은 검정");
-				continue;
-			}
-			switch (i){
-				case 0: System.out.print("    " + i + "번 공의 색은 흰색"); break;
-				case 1: System.out.print("    " + i + "번 공의 색은 노랑"); break;
-				case 2: System.out.print("    " + i + "번 공의 색은 빨강"); break;
-				case 3: System.out.print("    " + i + "번 공의 색은 분홍"); break;
-				case 4: System.out.print("    " + i + "번 공의 색은 초록"); break;
-				case 5: System.out.print("    " + i + "번 공의 색은 검정"); break;
-			}
-			if (i % 2 == 1) System.out.println();
-		}
-		System.out.println("-------------------------------------------------");
+		//게임 시작
 		play();
 	}
 
@@ -110,6 +96,29 @@ public class Game {
 		for (int i = 0; i < playerCount; i++) players[i] = new Player(i, balls);
 	}
 
+	/**
+	 *	시작 메시지를 출력
+	 */
+	private void printStartMessage(){
+		System.out.println("----------------  게  임  시  작  -----------------");
+		for (int i = 0; i < Balls.length; i++){
+			if (i == Balls.length - 1) {
+				System.out.println("    " + i + "번 공의 색은 검정");
+				continue;
+			}
+			switch (i){
+				case 0: System.out.print("    " + i + "번 공의 색은 흰색"); break;
+				case 1: System.out.print("    " + i + "번 공의 색은 노랑"); break;
+				case 2: System.out.print("    " + i + "번 공의 색은 빨강"); break;
+				case 3: System.out.print("    " + i + "번 공의 색은 분홍"); break;
+				case 4: System.out.print("    " + i + "번 공의 색은 초록"); break;
+				case 5: System.out.print("    " + i + "번 공의 색은 검정"); break;
+			}
+			if (i % 2 == 1) System.out.println();
+		}
+		System.out.println("-------------------------------------------------");
+	}
+
 	private boolean prevBallCollision(int cnt) {
 		for (int i = 0; i < cnt; i++) {
 			if (getDist(balls[i], balls[cnt]) < Ball.DIAMETER) return true;
@@ -117,7 +126,7 @@ public class Game {
 		if (getDist(balls[cnt], balls[balls.length-1]) < Ball.DIAMETER) return true;
 		return false;
 	}
-	
+
 	private boolean tableCollision(int i) {
 		if (balls[i][0] > Constant.TABLE_WIDTH - Ball.DIAMETER/2) return true;
 		if (balls[i][0] < Ball.DIAMETER/2) return true;
