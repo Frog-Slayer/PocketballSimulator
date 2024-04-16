@@ -142,6 +142,7 @@ public class Game {
 			double angle = players[order].getAngle();
 			double power = players[order].getPower();
 
+			//최대 & 최소 힘 내로 설정
 			if (power > Constant.MAX_POWER) power = Constant.MAX_POWER;
 			if (power < Constant.MIN_POWER) power = Constant.MIN_POWER;
 			power *= Constant.POWER_UNIT;
@@ -182,7 +183,7 @@ public class Game {
 				int u = update();
 
 				if (pocket == 0) pocket = u;
-				else if (u < 0 && pocket >= 0) pocket = u;
+				else if (u < 0 && pocket > 0) pocket = u;
 
 				display.draw();
 				time = LocalTime.now();
@@ -193,9 +194,9 @@ public class Game {
 			if (!Balls[0].isValid) {
 				System.out.println("흰 공을 넣었으므로 흰 공의 위치를 재설정하고 게임을 재진행합니다.");
 				Balls[0].isValid = true;
-				Balls[0].x = (double) Constant.TABLE_WIDTH / 2;
-				Balls[0].y = (double) Constant.TABLE_HEIGHT / 2;
-				balls[0] = new double[]{Balls[0].x, Balls[0].y};
+
+				Balls[0].setPos((double) Constant.TABLE_WIDTH / 2, (double) Constant.TABLE_HEIGHT / 2);
+				balls[0] = new double[]{Balls[0].getX(), Balls[0].getY()};
 
 				//1초후 게임 재개
 				try {
@@ -272,10 +273,10 @@ public class Game {
 	private int update() {
 		int pocket = 0;
 		for (int i = 0; i < Balls.length; i++) {
-			Balls[i].x = Balls[i].nx;
-			Balls[i].y = Balls[i].ny;
-			balls[i][0] = Balls[i].x;
-			balls[i][1] = Balls[i].y;
+			Balls[i].updatePos();
+			balls[i][0] = Balls[i].getX();
+			balls[i][1] = Balls[i].getY();
+
 			int h = checkHoles(i);
 			if (pocket == 0) pocket = h;
 			else if (h < 0 && pocket >= 0) pocket = -1;
@@ -295,8 +296,8 @@ public class Game {
 
 	private int checkHoles(int idx){
 		if (!Balls[idx].isValid) return 0;
-		double x = Balls[idx].x;
-		double y = Balls[idx].y;
+		double x = Balls[idx].getX();
+		double y = Balls[idx].getY();
 
         for (int[] hole : HOLES) {
             if (getDist(new double[]{x, y}, new double[]{(double) hole[0], (double) hole[1]}) < Constant.HOLE_SIZE * Constant.HOLE_SIZE) {

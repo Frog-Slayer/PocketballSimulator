@@ -8,10 +8,11 @@ public class Ball {
 	public static final double DIAMETER = 5.73f;
 
 	//사실 private로 두고 getter, setter를 두는 게 낫겠지만 바꿀 게 너무 많아서 public으로 둠
-    public double x;
-	public double y;
-	public double nx;
-	public double ny;
+    private double x;
+	private double y;
+	private double nx;
+	private double ny;
+
 	public double xVeloc;
 	public double yVeloc;
 
@@ -46,6 +47,24 @@ public class Ball {
 		yVeloc *= (1 - Constant.FRICTION);
 		ny = y + yVeloc;
 		nx = x + xVeloc;
+	}
+
+	public void setPos(double x, double y){
+		this.x = x;
+		this.y = y;
+	}
+
+	public void updatePos(){
+		this.x = nx;
+		this.y = ny;
+	}
+
+	public double getX(){
+		return this.x;
+	}
+
+	public double getY(){
+		return this.y;
 	}
 
 	public boolean collides(Ball j) {
