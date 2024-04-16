@@ -191,9 +191,9 @@ public class Game {
 			}
 
 			//흰 공을 넣어버린 경우
-			if (!Balls[0].isValid) {
+			if (!Balls[0].isValid()) {
 				System.out.println("흰 공을 넣었으므로 흰 공의 위치를 재설정하고 게임을 재진행합니다.");
-				Balls[0].isValid = true;
+				Balls[0].setValid(true);
 
 				Balls[0].setPos((double) Constant.TABLE_WIDTH / 2, (double) Constant.TABLE_HEIGHT / 2);
 				balls[0] = new double[]{Balls[0].getX(), Balls[0].getY()};
@@ -252,13 +252,15 @@ public class Game {
 	
 	private int tryMove() {
 		int firstHit = 0;
-		for (int i = 0; i < balls.length; i++) 	if (Balls[i].isValid) Balls[i].calcNext();
+		for (int i = 0; i < balls.length; i++) 	{
+			if (Balls[i].isValid()) Balls[i].calcNext();
+		}
 
 		for (int i = 0; i < balls.length; i++) {
-			if (!Balls[i].isValid) continue;
+			if (!Balls[i].isValid()) continue;
 			for (int j = 0; j < balls.length; j++) {
 				if (i == j) continue;
-				if (!Balls[j].isValid) continue;
+				if (!Balls[j].isValid()) continue;
 				if (Balls[i].collides(Balls[j])) {
 					if ((i == 0 || j == 0) && firstHit == 0) {
 						firstHit = i + j;
@@ -270,6 +272,10 @@ public class Game {
 		return firstHit;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private int update() {
 		int pocket = 0;
 		for (int i = 0; i < Balls.length; i++) {
@@ -294,16 +300,22 @@ public class Game {
 		return playerBallCount[order] == 1 && ballNum == Balls.length-1;
 	}
 
+	/**
+	 * 각 공이 홀에 들어갔는지 여부를 판단
+	 * @param idx 공의 번호
+	 * @return
+	 */
 	private int checkHoles(int idx){
-		if (!Balls[idx].isValid) return 0;
+		if (!Balls[idx].isValid()) return 0;
 		double x = Balls[idx].getX();
 		double y = Balls[idx].getY();
 
         for (int[] hole : HOLES) {
             if (getDist(new double[]{x, y}, new double[]{(double) hole[0], (double) hole[1]}) < Constant.HOLE_SIZE * Constant.HOLE_SIZE) {
-                if (Balls[idx].isValid) System.out.printf("%d번 공 포켓!!\n", idx);
-                Balls[idx].isValid = false;
-                Balls[idx].yVeloc = Balls[idx].xVeloc = 0;
+				System.out.printf("%d번 공 포켓!!\n", idx);
+                Balls[idx].setValid(false);
+				Balls[idx].setVeloc(0, 0);
+
                 if (!isObjectBall(idx)) {
                     if (idx == Balls.length - 1 && playerBallCount[order] != 1) {
                         System.out.printf("공이 남아있는데 마지막 공을 넣었으므로 %d번 플레이어의 패배입니다.\n", order);

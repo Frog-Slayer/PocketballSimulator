@@ -38,10 +38,10 @@ class DrawPanel extends JPanel {
         }
 
         for (Ball ball : Balls) {
-            if (!ball.isValid) continue;
-            g2.setColor(ball.color);
-            Ellipse2D.Double shape = new Ellipse2D.Double((ball.x - Ball.DIAMETER / 2) * SIZE_UNIT,
-                    (ball.y - Ball.DIAMETER / 2) * SIZE_UNIT,
+            if (!ball.isValid()) continue;
+            g2.setColor(ball.getColor());
+            Ellipse2D.Double shape = new Ellipse2D.Double((ball.getX() - Ball.DIAMETER / 2) * SIZE_UNIT,
+                    (ball.getY() - Ball.DIAMETER / 2) * SIZE_UNIT,
                     Ball.DIAMETER * SIZE_UNIT,
                     Ball.DIAMETER * SIZE_UNIT);
             g2.fill(shape);

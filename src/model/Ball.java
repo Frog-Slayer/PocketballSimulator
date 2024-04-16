@@ -12,14 +12,12 @@ public class Ball {
 	private double y;
 	private double nx;
 	private double ny;
-
-	public double xVeloc;
-	public double yVeloc;
-
+	private double xVeloc;
+	private double yVeloc;
 	private double xa;
 	private double ya;
-	public boolean isValid = false;
-	public Color color;
+	private boolean isValid = false;
+	private Color color;
 
 	public Ball(int idx, double x, double y)  {
         this.x = x;
@@ -66,6 +64,30 @@ public class Ball {
 	public double getY(){
 		return this.y;
 	}
+
+	//각 공들의 이동 속도가 최저 기준을 넘은 경우, 움직이고 있는 상태라 판단한다.
+	public boolean isMoving(){
+		return Math.abs(this.xVeloc) > Constant.VELOC_BOUND || Math.abs(this.yVeloc) > Constant.VELOC_BOUND;
+	}
+
+	public void setVeloc(double xVeloc, double yVeloc){
+		this.xVeloc = 0;
+		this.yVeloc = 0;
+	}
+
+	public void setValid(boolean isValid){
+		this.isValid = isValid;
+	}
+
+	public boolean isValid(){
+		return this.isValid;
+	}
+
+	public Color getColor(){
+		return this.color;
+	}
+
+	// 아래는 물리 처리
 
 	public boolean collides(Ball j) {
 		if (!((j.nx - nx) * (j.nx - nx) + (j.ny - ny) * (j.ny - ny) < DIAMETER * DIAMETER)) return false;
@@ -147,8 +169,6 @@ public class Ball {
 		}
 	}
 
-	//각 공들의 이동 속도가 최저 기준을 넘은 경우, 움직이고 있는 상태라 판단한다.
-	public boolean isMoving(){
-		return Math.abs(this.xVeloc) > Constant.VELOC_BOUND || Math.abs(this.yVeloc) > Constant.VELOC_BOUND;
-	}
+
+
 }
