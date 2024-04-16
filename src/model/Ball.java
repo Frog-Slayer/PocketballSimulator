@@ -7,26 +7,26 @@ public class Ball {
 	public static final double MASS = 1;
 	public static final double DIAMETER = 5.73f;
 
-	private int idx;
-	private double x;
-	private double y;
-	private double nx;
-	private double ny;
-	private double xVeloc;
-	private double yVeloc;
+	//사실 private로 두고 getter, setter를 두는 게 낫겠지만 바꿀 게 너무 많아서 public으로 둠
+    public double x;
+	public double y;
+	public double nx;
+	public double ny;
+	public double xVeloc;
+	public double yVeloc;
+
 	private double xa;
 	private double ya;
-	private boolean isValid = false;
-	private Color color;
+	public boolean isValid = false;
+	public Color color;
 
 	public Ball(int idx, double x, double y)  {
-		this.idx = idx;
-		this.x = x;
+        this.x = x;
 		this.y = y;
 		this.nx = x;
 		this.ny = y;
 		this.isValid = true;
-		this.color = (this.idx == Game.Balls.length -1 ? Color.BLACK : Constant.BALL_COLOR[idx % 6]);
+		this.color = (idx == Game.Balls.length -1 ? Color.BLACK : Constant.BALL_COLOR[idx % 6]);
 	}
 
 	public void addPower(double power, double angle) {
