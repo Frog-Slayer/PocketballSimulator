@@ -6,7 +6,6 @@ import view.Display;
 import java.awt.*;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 
 public class Game {
@@ -26,7 +25,6 @@ public class Game {
 
 	private int[] fouls;
 	private int[] playerBallCount;
-	private Set<Integer> []objectBalls;
 
 	private LocalTime time;
 
@@ -35,25 +33,25 @@ public class Game {
 
 	public Game(int playerCount, int ballCountForEachPlayer){
 		this.playerCount = playerCount;
-        //각 플레이어가 넣어야 할 공의 수(마지막 공 제외)
 
+		//공 생성
+		generateBalls(ballCountForEachPlayer);
 
-		setBalls(ballCountForEachPlayer);
+		//새로운 플레이어 생성
+		generatePlayers(playerCount);
 
-		players = new Player[playerCount];
-		fouls = new int[playerCount];
-		objectBalls = new Set[playerCount];
-
-		for (int i = 0; i < playerCount; i++) players[i] = new Player(i, balls);
-
+		//디스플레이 생성
 		this.display = new Display("Pocket model.Ball", Constant.TABLE_WIDTH, Constant.TABLE_HEIGHT, Constant.SIZE_UNIT);
 		this.display.setBalls(Balls);
 
+		//게임의 상태
 		order = 0;
 		isPlaying = true;
 		turnCount = 2;
 		playerBallCount = new int[playerCount];
 		for (int i = 0; i < playerCount; i++) playerBallCount[i] = ballCountForEachPlayer + 1;
+
+
 		System.out.println("----------------  게  임  시  작  -----------------");
 		for (int i = 0; i < Balls.length; i++){
 			if (i == Balls.length - 1) {
@@ -75,9 +73,9 @@ public class Game {
 	}
 
 	/**
-	 * 임의의 위치에 공을 생성합니다.
+	 * 임의의 위치에 공을 생성
 	 */
-	private void setBalls(int ballCountForEachPlayer) {
+	private void generateBalls(int ballCountForEachPlayer) {
 		balls = new double[ballCountForEachPlayer * playerCount + 2][2];
 		time = LocalTime.now();
 
@@ -100,6 +98,16 @@ public class Game {
 		for (int i = 0; i < balls.length; i++) {
 			Balls[i] = new Ball(i, balls[i][0], balls[i][1]);
 		}
+	}
+
+	/**
+	 * 플레이어 생성
+	 * @param playerCount 만들 플레이어의 수
+	 */
+	private void generatePlayers(int playerCount){
+		players = new Player[playerCount];
+		fouls = new int[playerCount];
+		for (int i = 0; i < playerCount; i++) players[i] = new Player(i, balls);
 	}
 
 	private boolean prevBallCollision(int cnt) {
