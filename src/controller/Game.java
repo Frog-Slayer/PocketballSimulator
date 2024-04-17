@@ -143,15 +143,28 @@ public class Game {
 	private void play() {
 		while (isPlaying) {
 			time = LocalTime.now();
-
-			//0.5초의 텀을 줌
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
+			System.out.println("[" + (order + 1) +"번 플레이어의 " + (turnCount/2) +"번째 차례]");
+			for (int i = 0; i < playerCount; i++){
+				System.out.println((i + 1) + "번 플레이어의 남은 공 수: " + playerBallCount[i]);
 			}
 
-			System.out.println("[" + (order + 1) +"번 플레이어의 " + (turnCount/2) +"번 째 차례]");
+			//흰 공을 넣어버린 경우
+			if (!Balls[0].isValid()) {
+				System.out.println("흰 공을 넣었으므로 흰 공의 위치를 재설정하고 게임을 재진행합니다.");
+
+				//0.5초의 텀을 줌
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+
+				Balls[0].setValid(true);
+				Balls[0].setPos((double) Constant.TABLE_WIDTH / 2, (double) Constant.TABLE_HEIGHT / 2);
+				balls[0][0] = Balls[0].getX();
+				balls[0][1] = Balls[0].getY();
+			}
+
 			//플레이어로부터 힘과 각도를 받아서
 			double angle = players[order].getAngle();
 			double power = players[order].getPower();
@@ -203,17 +216,6 @@ public class Game {
 				toolkit.sync();
 			}
 
-			//흰 공을 넣어버린 경우
-			if (!Balls[0].isValid()) {
-				System.out.println("흰 공을 넣었으므로 흰 공의 위치를 재설정하고 게임을 재진행합니다.");
-				Balls[0].setValid(true);
-
-				Balls[0].setPos((double) Constant.TABLE_WIDTH / 2, (double) Constant.TABLE_HEIGHT / 2);
-				balls[0][0] = Balls[0].getX();
-				balls[0][1] = Balls[0].getY();
-
-
-			}
 
 			if (isPlaying) {
 				//파울 처리
@@ -311,10 +313,9 @@ public class Game {
 		if (ballNum == 0) return false;
 		if (playerCount == 2) {
 			if (ballNum % 2 != order && ballNum != Balls.length - 1) return true;
-			if (playerBallCount[order] == 1 && ballNum == Balls.length - 1) return true;
 		}
-		if (ballNum != Balls.length - 1) return true;
-		return playerBallCount[order] == 1 && ballNum == Balls.length-1;
+		else if (ballNum != Balls.length - 1) return true;
+		return playerBallCount[order] <= 1 && ballNum == Balls.length-1;
 	}
 
 	/**
@@ -343,12 +344,13 @@ public class Game {
                         System.out.printf("공이 남아있는데 마지막 공을 넣었으므로 %d번 플레이어의 패배입니다.\n", order);
                         isPlaying = false;
                     } else if (idx != 0) {//상대편의 볼 카운트를 줄여 줌
-                        playerBallCount[playerCount - order - 1]--;
+						pocketNotObject = true;
+						if (playerBallCount[playerCount - order - 1] > 0) playerBallCount[playerCount - order - 1]--;
                     }
                     return -1;
                 }
                 System.out.println("목적구를 넣는 데 성공했습니다.");
-                playerBallCount[order]--;
+				if (playerBallCount[order] > 0) playerBallCount[order]--;
                 return 1;
             }
         }
