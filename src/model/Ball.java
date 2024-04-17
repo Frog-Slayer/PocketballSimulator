@@ -92,7 +92,6 @@ public class Ball {
 	}
 
 	// 아래는 물리 처리
-
 	public boolean collides(Ball j) {
 		if (!((j.nx - nx) * (j.nx - nx) + (j.ny - ny) * (j.ny - ny) < DIAMETER * DIAMETER)) return false;
 
