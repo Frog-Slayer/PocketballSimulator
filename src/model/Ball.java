@@ -5,7 +5,6 @@ import controller.Game;
 import java.awt.*;
 
 public class Ball {
-	public static final double ELASTIC_MODULUS = 1f;
 	public static final double MASS = 1;
 	public static final double DIAMETER = 5.73f;
 
