@@ -61,7 +61,6 @@ public class Game {
 	 */
 	private void generateBalls(int ballCountForEachPlayer) {
 		balls = new double[ballCountForEachPlayer * playerCount + 2][2];
-		System.out.println("balls: " + balls);
 		time = LocalTime.now();
 
 		//흰 공의 위치 설정
@@ -215,6 +214,8 @@ public class Game {
 			}
 
 			if (isPlaying) {
+				//파울 처리
+				//아무 공도 못 맞히거나, 목적구가 아닌 공을 먼저 맞히거나, 목적구가 아닌 공을 넣거나
 				if (whiteFirstHitIdx == 0) {
 					fouls[order]++;
 					System.out.println("아무 공도 맞히지 못했습니다. 파울(" + fouls[order] + ")");
@@ -223,7 +224,7 @@ public class Game {
 					System.out.println("목적구가 아닌 공(" + whiteFirstHitIdx + "번)을 먼저 맞혔습니다. 파울(" + fouls[order] + ")");
 				} else if (pocketNotObject) {
 					fouls[order]++;
-					System.out.println("목적구가 아닌 궁을 포켓했습니다. 파울(" + fouls[order] + ")");
+					System.out.println("목적구가 아닌 공을 포켓했습니다. 파울(" + fouls[order] + ")");
 				}
 
 				if (fouls[order] == 3) {
@@ -282,7 +283,7 @@ public class Game {
 
 	/**
 	 * 계산한 다음 상태로 게임의 상태를 업데이트
-	 * @return
+	 * @return -1 : 잘못된 공을 넣은 경우, 0 : 아무 것도 못 넣은 경우, 1: 목적구를 넣은 경우
 	 */
 	private int update() {
 		int pocket = 0;

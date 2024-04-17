@@ -1,11 +1,14 @@
 package player;
 
 public class Player {
-	//order와 balls는 건드리면 됩니다.
+	//플레이어의 순서
 	private int order = 0;
 
-	//0번은 수구(흰공), 마지막 공은 검은 공입니다.
-	//플레이어가 2명일 경우 order = 0이면 홀수, 1이면 짝수번 공이 목적구입니다(마지막 공 제외)
+	/*
+	 각 공의 위치를 나타냅니다.
+	 balls[0]은 수구(흰공), balls[balls.length - 1]은 검은 공입니다.
+	 플레이어가 2명일 경우 order = 0이면 홀수, 1이면 짝수번 공이 목적구입니다(마지막 공 제외)
+	*/
 	private double[][] balls;
 
 	private double power = 100f;
@@ -15,6 +18,9 @@ public class Player {
 		this.order = order;
 		this.balls = balls;
 	}
+
+	//do not modify above
+	//please modify below
 
 	/**
 	 * 적절히 공을 넣을 수 있도록 getAngle()과 getPower() 메서드를 변경해야 합니다.
