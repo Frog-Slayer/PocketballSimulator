@@ -3,6 +3,9 @@ package player;
 public class Player {
 	//order와 balls는 건드리면 됩니다.
 	private int order = 0;
+
+	//0번은 수구(흰공), 마지막 공은 검은 공입니다.
+	//플레이어가 2명일 경우 order = 0이면 홀수, 1이면 짝수번 공이 목적구입니다(마지막 공 제외)
 	private double[][] balls;
 
 	private double power = 100f;
