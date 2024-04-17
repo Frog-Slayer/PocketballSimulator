@@ -1,4 +1,4 @@
-import model.Game;
+import controller.Game;
 import java.util.Scanner;
 
 public class Main {

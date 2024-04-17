@@ -1,5 +1,7 @@
-package model;
+package controller;
 
+import model.Ball;
+import model.Constant;
 import player.Player;
 import view.Display;
 

@@ -2,7 +2,7 @@ package view;
 
 import model.Ball;
 import model.Constant;
-import model.Game;
+import controller.Game;
 
 import javax.swing.*;
 import java.awt.*;

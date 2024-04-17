@@ -1,5 +1,7 @@
 package model;
 
+import controller.Game;
+
 import java.awt.*;
 
 public class Ball {
