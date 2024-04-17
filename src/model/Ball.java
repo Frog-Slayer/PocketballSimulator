@@ -38,6 +38,7 @@ public class Ball {
 	}
 
 	public void calcNext() {
+		if (!isValid) return;
 		if (Math.abs(xVeloc) < Constant.VELOC_BOUND) xVeloc = 0;
 		if (Math.abs(yVeloc) < Constant.VELOC_BOUND) yVeloc = 0;
 
@@ -50,6 +51,8 @@ public class Ball {
 	public void setPos(double x, double y){
 		this.x = x;
 		this.y = y;
+		this.nx = x;
+		this.ny = y;
 	}
 
 	public void updatePos(){

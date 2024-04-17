@@ -19,8 +19,16 @@ public class Player {
 	*/
 	public double getAngle() {
 		//TODO
-		for (int i = 1; i < balls.length - 1; i++) if (isObjectBall(i)) angle = getAngle(0, i);
-		return angle;
+		for (int i = 1; i < balls.length - 1; i++) {
+			if (isObjectBall(i)) {
+				System.out.println(i + "th ball is valid(" + balls[i][0] + "," + balls[i][1] + ")" );
+				System.out.println(balls);
+
+				return angle = getAngle(0, i);
+			}
+		}
+
+		return angle = 0f;
 	}
 	
 	public double getPower() {
@@ -43,7 +51,25 @@ public class Player {
 	}
 
 	private boolean isObjectBall(int n){
+		if (balls[n][0] == 0) return false;
 
-		return true;
+		int ballCount = 0;
+		for (int i = 1; i < balls.length - 1; i++){
+			if (balls[i][0] == 0) continue;
+			if (order == 0 && i % 2 == 1) ballCount++;
+			else if (order == 1 && i % 2 == 0) ballCount++;
+		}
+
+		if (ballCount == 0) return n == balls.length - 1;
+
+		if (order == 0){
+			return n % 2 == 1;
+		}
+
+		if (order == 1) {
+			return n % 2 == 0;
+		}
+
+		return false;
 	}
 }

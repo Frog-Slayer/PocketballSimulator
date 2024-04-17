@@ -22,12 +22,12 @@ public class Game {
 	private boolean pocketNotObject = false;
 
 	private int[] fouls;
-	private int[] playerBallCount;
+	private final int[] playerBallCount;
 
 	private LocalTime time;
 
 	private Player[] players;
-	private Display display;
+	private final Display display;
 
 	public Game(int playerCount, int ballCountForEachPlayer){
 		this.playerCount = playerCount;
@@ -42,7 +42,7 @@ public class Game {
 		this.display = new Display("Pocket model.Ball", Constant.TABLE_WIDTH, Constant.TABLE_HEIGHT, Constant.SIZE_UNIT);
 		this.display.setBalls(Balls);
 
-		//게임의 상태
+		//게임의 상태 초기화
 		order = 0;
 		isPlaying = true;
 		turnCount = 2;
@@ -61,6 +61,7 @@ public class Game {
 	 */
 	private void generateBalls(int ballCountForEachPlayer) {
 		balls = new double[ballCountForEachPlayer * playerCount + 2][2];
+		System.out.println("balls: " + balls);
 		time = LocalTime.now();
 
 		//흰 공의 위치 설정
@@ -132,11 +133,16 @@ public class Game {
 	}
 	
 	private double getDist(double []a, double[]b) {
-		return (a[0] - b[0])*(a[0] - b[0]) + (a[1] - b[1])*(a[1] - b[1]);
+		return Math.sqrt((a[0] - b[0])*(a[0] - b[0]) + (a[1] - b[1])*(a[1] - b[1]));
 	}
 
+	/**
+	 * 게임 플레이 로직
+	 */
 	private void play() {
 		while (isPlaying) {
+			time = LocalTime.now();
+
 			System.out.println("[" + (order + 1) +"번 플레이어의 " + (turnCount/2) +"번 째 차례]");
 			//플레이어로부터 힘과 각도를 받아서
 			double angle = players[order].getAngle();
@@ -149,7 +155,6 @@ public class Game {
 
 			//수구에 힘과 각도를 넣기
 			Balls[0].addPower(power, angle);
-			time = LocalTime.now();
 
             boolean isMoving = true;
 			int whiteFirstHitIdx = 0; //수구가 가장 먼저 친 공의 번호
@@ -196,7 +201,8 @@ public class Game {
 				Balls[0].setValid(true);
 
 				Balls[0].setPos((double) Constant.TABLE_WIDTH / 2, (double) Constant.TABLE_HEIGHT / 2);
-				balls[0] = new double[]{Balls[0].getX(), Balls[0].getY()};
+				balls[0][0] = Balls[0].getX();
+				balls[0][1] = Balls[0].getY();
 
 				//1초후 게임 재개
 				try {
@@ -204,23 +210,18 @@ public class Game {
 				} catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
-                continueOrder = false;
 			}
 
 			if (isPlaying) {
 				if (whiteFirstHitIdx == 0) {
 					fouls[order]++;
 					System.out.println("아무 공도 맞히지 못했습니다. 파울(" + fouls[order] + ")");
-					continueOrder = false;
 				} else if (!isObjectBall(whiteFirstHitIdx)) {
 					fouls[order]++;
 					System.out.println("목적구가 아닌 공(" + whiteFirstHitIdx + "번)을 먼저 맞혔습니다. 파울(" + fouls[order] + ")");
-					continueOrder = false;
 				} else if (pocketNotObject) {
 					fouls[order]++;
 					System.out.println("목적구가 아닌 궁을 포켓했습니다. 파울(" + fouls[order] + ")");
-					continueOrder = false;
 				}
 
 				if (fouls[order] == 3) {
@@ -228,6 +229,7 @@ public class Game {
 					isPlaying = false;
 				}
 
+				//목적구를 넣은 경우, 자신의 턴을 계속함
 				if (pocket > 0) continueOrder = true;
 
 				for (int i = 0; i < playerCount; i++){
@@ -249,7 +251,11 @@ public class Game {
 		order = (order + 1) % playerCount;
 		turnCount += 1;
 	}
-	
+
+	/**
+	 * 공의 다음 위치를 계산해봄
+	 * @return 수구로 가장 먼저 맞힌 공의 번호
+	 */
 	private int tryMove() {
 		int firstHit = 0;
 		for (int i = 0; i < balls.length; i++) 	{
@@ -273,7 +279,7 @@ public class Game {
 	}
 
 	/**
-	 *
+	 * 계산한 다음 상태로 게임의 상태를 업데이트
 	 * @return
 	 */
 	private int update() {
@@ -284,12 +290,18 @@ public class Game {
 			balls[i][1] = Balls[i].getY();
 
 			int h = checkHoles(i);
+
 			if (pocket == 0) pocket = h;
-			else if (h < 0 && pocket >= 0) pocket = -1;
+			else if (h < 0 && pocket > 0) pocket = -1;
 		}
 		return pocket;
 	}
 
+	/**
+	 * 해당 번호의 공이 현재 순서의 플레이어의 목적구인지 확인
+	 * @param ballNum 공의 번호
+	 * @return 목적구 여부
+	 */
 	private boolean isObjectBall(int ballNum){
 		if (ballNum == 0) return false;
 		if (playerCount == 2) {
@@ -303,7 +315,7 @@ public class Game {
 	/**
 	 * 각 공이 홀에 들어갔는지 여부를 판단
 	 * @param idx 공의 번호
-	 * @return
+	 * @return -1 목적구가 아닌 공을 넣음, 0 아무 것도 안 넣음, 1 목적구 넣음
 	 */
 	private int checkHoles(int idx){
 		if (!Balls[idx].isValid()) return 0;
@@ -311,16 +323,21 @@ public class Game {
 		double y = Balls[idx].getY();
 
         for (int[] hole : HOLES) {
-            if (getDist(new double[]{x, y}, new double[]{(double) hole[0], (double) hole[1]}) < Constant.HOLE_SIZE * Constant.HOLE_SIZE) {
+            if (getDist(new double[]{x, y}, new double[]{(double) hole[0], (double) hole[1]}) < Constant.HOLE_SIZE) {
 				System.out.printf("%d번 공 포켓!!\n", idx);
+
+				//invalidate
                 Balls[idx].setValid(false);
 				Balls[idx].setVeloc(0, 0);
+				Balls[idx].setPos(0, 0);
+				balls[idx][0] = balls[idx][1] = 0;
 
+				//목적구가 아닌 경우
                 if (!isObjectBall(idx)) {
                     if (idx == Balls.length - 1 && playerBallCount[order] != 1) {
                         System.out.printf("공이 남아있는데 마지막 공을 넣었으므로 %d번 플레이어의 패배입니다.\n", order);
                         isPlaying = false;
-                    } else if (idx != 0) {
+                    } else if (idx != 0) {//상대편의 볼 카운트를 줄여 줌
                         playerBallCount[playerCount - order - 1]--;
                     }
                     return -1;
