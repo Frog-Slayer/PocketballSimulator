@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * 벡터 연산을 위한 벡터, 점 클래스
+ */
 class Point{
     double x;
     double y;
@@ -9,6 +12,7 @@ class Point{
         this.y = y;
     }
 }
+
 public class Vector {
     public Point p0;
     public Point p1;

@@ -2,13 +2,14 @@ package model;
 
 import java.awt.*;
 
+/**
+ * 시뮬레이터 내에서 사용되는 상수 모음
+ */
 public class Constant {
     public static final Color BALL_COLOR[] = {Color.WHITE, Color.YELLOW, Color.RED, Color.PINK, Color.GREEN, Color.BLACK};
     public static final double HOLE_SIZE = 8f;
 
-    /*
-        흰 공을 쳤을 때 가해지는 힘 배수. 공이 너무 빠르면 충돌이 제대로 되지 않을 수 있음
-     */
+    //흰 공을 쳤을 때 가해지는 힘 배수. 공이 너무 빠르면 충돌이 제대로 되지 않을 수 있음
     public static final double POWER_UNIT = 0.1f;
 
     // 당구대의 반발 계수입니다. 0 초과 1 이하의 값
