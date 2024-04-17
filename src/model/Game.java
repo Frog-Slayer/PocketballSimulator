@@ -227,8 +227,8 @@ public class Game {
 					System.out.println("목적구가 아닌 공을 포켓했습니다. 파울(" + fouls[order] + ")");
 				}
 
-				if (fouls[order] == 3) {
-					System.out.println((order + 1) + "번 플레이어가 3번의 파울로 패배했습니다.");
+				if (fouls[order] == Constant.MAX_FOUL) {
+					System.out.println((order + 1) + "번 플레이어가 "+ Constant.MAX_FOUL +"번의 파울로 패배했습니다.");
 					isPlaying = false;
 				}
 
