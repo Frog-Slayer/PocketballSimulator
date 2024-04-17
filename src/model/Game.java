@@ -143,6 +143,13 @@ public class Game {
 		while (isPlaying) {
 			time = LocalTime.now();
 
+			//0.5초의 텀을 줌
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+
 			System.out.println("[" + (order + 1) +"번 플레이어의 " + (turnCount/2) +"번 째 차례]");
 			//플레이어로부터 힘과 각도를 받아서
 			double angle = players[order].getAngle();
@@ -204,12 +211,7 @@ public class Game {
 				balls[0][0] = Balls[0].getX();
 				balls[0][1] = Balls[0].getY();
 
-				//1초후 게임 재개
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+
 			}
 
 			if (isPlaying) {
